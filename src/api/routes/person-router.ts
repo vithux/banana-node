@@ -1,5 +1,5 @@
 import express from 'express'
-import personRepository from '../repositories/person-repository'
+import personRepository from '../../repositories/person-repository'
 
 const personRouter = express.Router()
 
@@ -7,8 +7,9 @@ personRouter.get('/:id', (req, res, next) => {
 
     try {
         const id = req.params.id
+        const params = req.body.params
 
-        personRepository.findPerson(id)
+        personRepository.findPerson(id, params)
             .then(personResponse => {
                 res.json(personResponse)
             })

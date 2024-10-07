@@ -1,4 +1,6 @@
 import pool from "../utils/db";
+import dataDictionary from "../utils/dataDictionary";
+import queryBuilder from "../utils/queryBuilder"
 
 const createPerson = async (name: string, email: string) => {
   const sqlQuery =
@@ -10,14 +12,24 @@ const createPerson = async (name: string, email: string) => {
   return result.rows[0];
 }
 
-const findPerson = async (id: string) => {
+const findPerson = async (id: string, params: { [key: string]: any }) => {
   const sqlQuery =
-    "SELECT id, username, email FROM users " +
-    "WHERE id = ($1)"
+    "SELECT             " +
+    "  id,              " +
+    "  username,        " +
+    "  email            " +
+    "FROM users         " +
+    "WHERE 1=1          " +
+    "  /*WHERE_PARAMS*/ "
 
-  const result = await pool.query(sqlQuery, [id]);
+  const newSqlQuery = queryBuilder.generateWhereParams(sqlQuery, params)
+  console.log(newSqlQuery)
 
-  return result.rows;
+  const result = await pool.query(newSqlQuery);
+
+  return dataDictionary.renameData(result.rows)
 }
 
-export default {findPerson, createPerson}
+
+
+export default { findPerson, createPerson }
